@@ -84,7 +84,7 @@ class GitVersion
         $directory = $startDirectory;
 
         // For tests
-        $gitDir = '' !== getenv('GIT_DOT_DIR') ? getenv('GIT_DOT_DIR') : '.git';
+        $gitDir = false !== getenv('GIT_DOT_DIR') ? getenv('GIT_DOT_DIR') : '.git';
 
         while (true) {
             if (file_exists($directory.DIRECTORY_SEPARATOR.$gitDir) && is_dir($directory.DIRECTORY_SEPARATOR.$gitDir)) {
