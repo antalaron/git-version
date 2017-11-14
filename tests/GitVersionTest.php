@@ -11,6 +11,8 @@
 
 namespace Tests\Antalaron\GitVersion;
 
+use Antalaron\GitVersion\GitVersion;
+
 /**
  * GitVersionTest.
  *
@@ -18,4 +20,74 @@ namespace Tests\Antalaron\GitVersion;
  */
 class GitVersionTest extends \PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        putenv('GIT_DOT_DIR=_git');
+    }
+
+    public function tearDown()
+    {
+        putenv('GIT_DOT_DIR=');
+    }
+
+    public function testCorrectVersion()
+    {
+        $gitVersion = $this->getObject();
+
+        $this->assertSame('b302440fd9972a341f2ecbe50d347b9fbd5b9f0b', $gitVersion->getVersion(__DIR__.'/Fixtures/correct'));
+    }
+
+    public function testCorrectVersionUnderSubdirs()
+    {
+        $gitVersion = $this->getObject();
+
+        $this->assertSame('b302440fd9972a341f2ecbe50d347b9fbd5b9f0b', $gitVersion->getVersion(__DIR__.'/Fixtures/correct/subdir/subdir'));
+    }
+
+    public function testCorrectVersionWithLength()
+    {
+        $gitVersion = $this->getObject();
+
+        $this->assertSame('b302440', $gitVersion->getVersion(__DIR__.'/Fixtures/correct', 7));
+    }
+
+    public function testNoGitDirectory()
+    {
+        $gitVersion = $this->getObject();
+
+        $this->assertNull($gitVersion->getVersion(__DIR__.'/Fixtures/no-git-dir'));
+    }
+
+    public function testHeadRefFile()
+    {
+        $gitVersion = $this->getObject();
+
+        $this->assertNull($gitVersion->getVersion(__DIR__.'/Fixtures/no-head-file'));
+    }
+
+    public function testNoRefFile()
+    {
+        $gitVersion = $this->getObject();
+
+        $this->assertNull($gitVersion->getVersion(__DIR__.'/Fixtures/no-ref-file'));
+    }
+
+    public function testInvalidHeadFile()
+    {
+        $gitVersion = $this->getObject();
+
+        $this->assertNull($gitVersion->getVersion(__DIR__.'/Fixtures/no-ref-file'));
+    }
+
+    public function testInInvalidSubdir()
+    {
+        $gitVersion = $this->getObject();
+
+        $this->assertNull($gitVersion->getVersion(__DIR__.'/Fixtures/correct/not-existing-subdir'));
+    }
+
+    private function getObject()
+    {
+        return new GitVersion();
+    }
 }
