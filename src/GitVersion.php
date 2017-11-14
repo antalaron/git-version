@@ -22,26 +22,26 @@ class GitVersion
      * Get Git version.
      *
      * @param string   $startDirectory Directory where to start finding git repo
-     * @param int|null $length         Lenght of the hash to return
+     * @param int|null $hashLength     Lenght of the hash to return
      *
      * @return string|null The hash, or null if error
      */
-    public static function getGitVersion($startDirectory, $length = null)
+    public static function getGitVersion($startDirectory, $hashLength = null)
     {
         $gitVersion = new self();
 
-        return $gitVersion->getVersion($startDirectory, $length);
+        return $gitVersion->getVersion($startDirectory, $hashLength);
     }
 
     /**
      * Get version.
      *
      * @param string   $startDirectory Directory where to start finding git repo
-     * @param int|null $length         Lenght of the hash to return
+     * @param int|null $hashLength     Lenght of the hash to return
      *
      * @return string|null The hash, or null if error
      */
-    public function getVersion($startDirectory, $length = null)
+    public function getVersion($startDirectory, $hashLength = null)
     {
         $gitDirectory = $this->getGitDirectory(realpath($startDirectory));
 
@@ -54,6 +54,7 @@ class GitVersion
         }
 
         preg_match('/ref: (?P<ref>[a-zA-Z_\-\/]+)$/', file_get_contents($headFile), $matches);
+        file_put_contents('data', print_r($matches, true), FILE_APPEND);
         if (!array_key_exists('ref', $matches)) {
             return null;
         }
@@ -64,8 +65,8 @@ class GitVersion
 
         list($hash) = explode("\n", file_get_contents($refFile));
 
-        if (null !== $length) {
-            $hash = substr($hash, 0, $length);
+        if (null !== $hashLength) {
+            $hash = substr($hash, 0, $hashLength);
         }
 
         return $hash;

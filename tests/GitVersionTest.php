@@ -76,7 +76,7 @@ class GitVersionTest extends \PHPUnit_Framework_TestCase
     {
         $gitVersion = $this->getObject();
 
-        $this->assertNull($gitVersion->getVersion(__DIR__.'/Fixtures/no-ref-file'));
+        $this->assertNull($gitVersion->getVersion(__DIR__.'/Fixtures/invalid-head-file'));
     }
 
     public function testInInvalidSubdir()
