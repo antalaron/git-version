@@ -54,7 +54,6 @@ class GitVersion
         }
 
         preg_match('/ref: (?P<ref>[a-zA-Z_\-\/]+)$/', file_get_contents($headFile), $matches);
-        file_put_contents('data', print_r($matches, true), FILE_APPEND);
         if (!array_key_exists('ref', $matches)) {
             return null;
         }
