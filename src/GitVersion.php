@@ -72,6 +72,60 @@ class GitVersion
     }
 
     /**
+     * Get Git latest commit message.
+     *
+     * @param string $startDirectory Directory where to start finding git repo
+     *
+     * @return string|null The message, or null if error
+     *
+     * @throws \RuntimeException If ext-zlib is not enabled
+     */
+    public static function getGitLatestCommit($startDirectory)
+    {
+        $gitVersion = new self();
+
+        return $gitVersion->getLatestCommit($startDirectory);
+    }
+
+    /**
+     * Get latest commit message.
+     *
+     * @param string $startDirectory Directory where to start finding git repo
+     *
+     * @return string|null The message, or null if error
+     *
+     * @throws \RuntimeException If ext-zlib is not enabled
+     */
+    public function getLatestCommit($startDirectory)
+    {
+        if (!function_exists('zlib_decode')) {
+            throw new \RuntimeException(sprintf('You should enable ext-zlib extension to use %s()', __METHOD__));
+        }
+
+        $gitDirectory = $this->getGitDirectory(realpath($startDirectory));
+        $ref = $this->getVersion($startDirectory);
+
+        if (!file_exists($commitFile = $gitDirectory.'/objects/'.substr($ref, 0, 2).'/'.substr($ref, 2)) || !is_readable($commitFile)) {
+            return null;
+        }
+
+        $data = @zlib_decode(file_get_contents($commitFile));
+
+        $commitMessage = explode("\n\n", $data, 2);
+        if (!is_array($commitMessage) || !array_key_exists(1, $commitMessage) || !is_string($commitMessage[1])) {
+            return null;
+        }
+
+        $commitMessage = explode("\n", $commitMessage[1], 2);
+
+        if (!is_array($commitMessage) || !array_key_exists(0, $commitMessage) || !is_string($commitMessage[0])) {
+            return null;
+        }
+
+        return $commitMessage[0];
+    }
+
+    /**
      * Get git direcoty.
      *
      * @param string $startDirectory
