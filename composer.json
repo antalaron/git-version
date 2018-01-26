@@ -29,6 +29,9 @@
             "Tests\\Antalaron\\GitVersion\\": "tests/"
         }
     },
+    "suggest": {
+        "ext-zlib": "Needed to support extracting latest commit message"
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "1.1-dev"

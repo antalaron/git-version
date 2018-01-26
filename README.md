@@ -39,6 +39,18 @@ If no git found, then the return value is `null`.
 There is a second `$hashLenght` parameter in the methods. With that, you will get
 the first n character of the hash.
 
+To get the latest commit message:
+
+```php
+$gitVersion = new \Antalaron\GitVersion\GitVersion();
+$gitVersion->getLatestCommit(__DIR__);
+
+// or static
+\Antalaron\GitVersion\GitVersion::getGitLatestCommit(__DIR__);
+```
+
+On error, the return value is `null`.
+
 License
 -------
 
