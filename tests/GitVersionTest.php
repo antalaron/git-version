@@ -86,8 +86,40 @@ class GitVersionTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($gitVersion->getVersion(__DIR__.'/Fixtures/correct/not-existing-subdir'));
     }
 
-    private function getObject()
+    public function testCorrectVersionWithCommitMessage()
     {
+        $gitVersion = $this->getObject(true);
+
+        $this->assertSame('Initial commit', $gitVersion->getLatestCommit(__DIR__.'/Fixtures/correct-with-commit'));
+    }
+
+    public function testCorrectVersionWithCommitMessageAndDescription()
+    {
+        $gitVersion = $this->getObject(true);
+
+        $this->assertSame('Initial commit', $gitVersion->getLatestCommit(__DIR__.'/Fixtures/correct-with-commit-and-description'));
+    }
+
+    public function testCommitMessageWithNoCommitFile()
+    {
+        $gitVersion = $this->getObject(true);
+
+        $this->assertNull($gitVersion->getLatestCommit(__DIR__.'/Fixtures/no-commit-file'));
+    }
+
+    public function testCommitMessageWithInvalidCommitFile()
+    {
+        $gitVersion = $this->getObject(true);
+
+        $this->assertNull($gitVersion->getLatestCommit(__DIR__.'/Fixtures/invalid-commit-file'));
+    }
+
+    private function getObject($zlibAware = false)
+    {
+        if ($zlibAware && !extension_loaded('zlib')) {
+            $this->markTestSkipped('The zlib extension is not available.');
+        }
+
         return new GitVersion();
     }
 }
