@@ -75,28 +75,30 @@ class GitVersion
      * Get Git latest commit message.
      *
      * @param string $startDirectory Directory where to start finding git repo
+     * @param bool   $usePack        Weather use the pack files or not
      *
      * @return string|null The message, or null if error
      *
      * @throws \RuntimeException If ext-zlib is not enabled
      */
-    public static function getGitLatestCommit($startDirectory)
+    public static function getGitLatestCommit($startDirectory, $usePack = true)
     {
         $gitVersion = new self();
 
-        return $gitVersion->getLatestCommit($startDirectory);
+        return $gitVersion->getLatestCommit($startDirectory, $usePack);
     }
 
     /**
      * Get latest commit message.
      *
      * @param string $startDirectory Directory where to start finding git repo
+     * @param bool   $usePack        Weather use the pack files or not
      *
      * @return string|null The message, or null if error
      *
      * @throws \RuntimeException If ext-zlib is not enabled
      */
-    public function getLatestCommit($startDirectory)
+    public function getLatestCommit($startDirectory, $usePack = true)
     {
         if (!\function_exists('zlib_decode')) {
             throw new \RuntimeException(sprintf('You should enable ext-zlib extension to use %s()', __METHOD__));
@@ -105,11 +107,22 @@ class GitVersion
         $gitDirectory = $this->getGitDirectory(realpath($startDirectory));
         $ref = $this->getVersion($startDirectory);
 
+        $data = null;
         if (!file_exists($commitFile = $gitDirectory.'/objects/'.substr($ref, 0, 2).'/'.substr($ref, 2)) || !is_readable($commitFile)) {
-            return null;
+            if (!$usePack) {
+                return null;
+            }
+            $unpacker = new GitUnpacker($ref, $gitDirectory);
+
+            $data = $unpacker->getCommitMessage();
+            if (null === $data) {
+                return null;
+            }
         }
 
-        $data = @zlib_decode(file_get_contents($commitFile));
+        if (null === $data) {
+            $data = @zlib_decode(file_get_contents($commitFile));
+        }
 
         $commitMessage = explode("\n\n", $data, 2);
         if (!\is_array($commitMessage) || !\array_key_exists(1, $commitMessage) || !\is_string($commitMessage[1])) {
