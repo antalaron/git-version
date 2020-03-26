@@ -114,9 +114,18 @@ class GitVersionTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($gitVersion->getLatestCommit(__DIR__.'/Fixtures/invalid-commit-file'));
     }
 
+    public function testCorrectPacked()
+    {
+        $gitVersion = $this->getObject(true);
+
+        $this->assertSame('f2213cbda1486db7befc77d8422d066f585958d4', $gitVersion->getVersion(__DIR__.'/Fixtures/correct-packed'));
+        $this->assertSame('Second commit', $gitVersion->getLatestCommit(__DIR__.'/Fixtures/correct-packed'));
+        $this->assertNull($gitVersion->getLatestCommit(__DIR__.'/Fixtures/correct-packed', false));
+    }
+
     private function getObject($zlibAware = false)
     {
-        if ($zlibAware && !extension_loaded('zlib')) {
+        if ($zlibAware && !\extension_loaded('zlib')) {
             $this->markTestSkipped('The zlib extension is not available.');
         }
 
