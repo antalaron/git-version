@@ -116,7 +116,7 @@ class GitVersionTest extends \PHPUnit_Framework_TestCase
 
     private function getObject($zlibAware = false)
     {
-        if ($zlibAware && !extension_loaded('zlib')) {
+        if ($zlibAware && !\extension_loaded('zlib')) {
             $this->markTestSkipped('The zlib extension is not available.');
         }
 
