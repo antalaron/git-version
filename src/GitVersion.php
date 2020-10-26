@@ -53,7 +53,7 @@ class GitVersion
             return null;
         }
 
-        preg_match('/ref: (?P<ref>[a-zA-Z_\-\/]+)$/', file_get_contents($headFile), $matches);
+        preg_match('/ref: (?P<ref>[a-zA-Z0-9_\-\/]+)$/', file_get_contents($headFile), $matches);
         if (!\array_key_exists('ref', $matches)) {
             return null;
         }

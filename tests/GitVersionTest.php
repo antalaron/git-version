@@ -114,6 +114,13 @@ class GitVersionTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($gitVersion->getLatestCommit(__DIR__.'/Fixtures/invalid-commit-file'));
     }
 
+    public function testCorrectWithNumberVersion()
+    {
+        $gitVersion = $this->getObject();
+
+        $this->assertSame('b302440fd9972a341f2ecbe50d347b9fbd5b9f0b', $gitVersion->getVersion(__DIR__.'/Fixtures/correct-with-number'));
+    }
+
     public function testCorrectPacked()
     {
         $gitVersion = $this->getObject(true);
