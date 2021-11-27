@@ -11,6 +11,8 @@
 
 namespace Antalaron\GitVersion;
 
+use Antalaron\GitVersion\Model\Commit;
+
 /**
  * GitVersion.
  *
@@ -89,6 +91,23 @@ class GitVersion
     }
 
     /**
+     * Get Git latest commit message.
+     *
+     * @param string $startDirectory Directory where to start finding git repo
+     * @param bool   $usePack        Weather use the pack files or not
+     *
+     * @return Commit|null The commit, or null if error
+     *
+     * @throws \RuntimeException If ext-zlib is not enabled
+     */
+    public static function getGitLatestCommitDetails($startDirectory, $usePack = true)
+    {
+        $gitVersion = new self();
+
+        return $gitVersion->getLatestCommitDetails($startDirectory, $usePack);
+    }
+
+    /**
      * Get latest commit message.
      *
      * @param string $startDirectory Directory where to start finding git repo
@@ -99,6 +118,23 @@ class GitVersion
      * @throws \RuntimeException If ext-zlib is not enabled
      */
     public function getLatestCommit($startDirectory, $usePack = true)
+    {
+        $commit = $this->getLatestCommitDetails($startDirectory, $usePack);
+
+        return null !== $commit ? $commit->getMessage() : null;
+    }
+
+    /**
+     * Get latest commit details.
+     *
+     * @param string $startDirectory Directory where to start finding git repo
+     * @param bool   $usePack        Weather use the pack files or not
+     *
+     * @return Commit|null The commit, or null if error
+     *
+     * @throws \RuntimeException If ext-zlib is not enabled
+     */
+    public function getLatestCommitDetails($startDirectory, $usePack = true)
     {
         if (!\function_exists('zlib_decode')) {
             throw new \RuntimeException(sprintf('You should enable ext-zlib extension to use %s()', __METHOD__));
@@ -124,18 +160,7 @@ class GitVersion
             $data = @zlib_decode(file_get_contents($commitFile));
         }
 
-        $commitMessage = explode("\n\n", $data, 2);
-        if (!\is_array($commitMessage) || !\array_key_exists(1, $commitMessage) || !\is_string($commitMessage[1])) {
-            return null;
-        }
-
-        $commitMessage = explode("\n", $commitMessage[1], 2);
-
-        if (!\is_array($commitMessage) || !\array_key_exists(0, $commitMessage) || !\is_string($commitMessage[0])) {
-            return null;
-        }
-
-        return $commitMessage[0];
+        return new Commit($data);
     }
 
     /**

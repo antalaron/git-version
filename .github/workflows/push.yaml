@@ -1,0 +1,53 @@
+name: Tests
+
+on: [push, pull_request]
+
+jobs:
+    php-cs-fixer:
+        name: Coding Standard
+        runs-on: ubuntu-latest
+        steps:
+            -
+                uses: actions/checkout@master
+            -
+                name: PHP-CS-Fixer
+                uses: docker://oskarstark/php-cs-fixer-ga:2.15.1
+                with:
+                    args: --diff --dry-run -vvv
+
+    test:
+        name: Test on PHP ${{ matrix.php-versions }}, dependencies ${{ matrix.dependencies }}
+        runs-on: ubuntu-latest
+
+        strategy:
+            fail-fast: false
+            matrix:
+                php-versions: ['5.5', '5.6', '7.0', '7.1', 7.2', '7.3', 7.4', '8.0', '8.1']
+                dependencies: ['lowest', 'highest']
+                exclude:
+                    -
+                        php-versions: '8.0'
+                        dependencies: 'lowest'
+                    -
+                        php-versions: '8.1'
+                        dependencies: 'lowest'
+
+        steps:
+            -
+                uses: actions/checkout@v2
+
+            -
+                name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: ${{ matrix.php-versions }}
+                    coverage: none
+
+            -
+                name: Install Composer Dependencies
+                uses: ramsey/composer-install@v1
+                with:
+                    dependency-versions: "${{ matrix.dependencies }}"
+
+            -   name: Run phpunit
+                run: vendor/bin/phpunit --verbose

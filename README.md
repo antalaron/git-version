@@ -1,7 +1,7 @@
 GitVersion
 ==========
 
-[![Build Status](https://travis-ci.org/antalaron/git-version.svg?branch=master)](https://travis-ci.org/antalaron/git-version) [![Coverage Status](https://coveralls.io/repos/github/antalaron/git-version/badge.svg?branch=master)](https://coveralls.io/github/antalaron/git-version?branch=master)
+![Tests](https://github.com/antalaron/git-version/actions/workflows/push.yaml/badge.svg?branch=master)
 
 PHP library to get the Git version of the project.
 
