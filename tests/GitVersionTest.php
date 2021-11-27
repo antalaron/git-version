@@ -12,24 +12,15 @@
 namespace Tests\Antalaron\GitVersion;
 
 use Antalaron\GitVersion\GitVersion;
+use Antalaron\GitVersion\Model\Commit;
 
 /**
  * GitVersionTest.
  *
  * @author Antal Áron <antalaron@antalaron.hu>
  */
-class GitVersionTest extends \PHPUnit_Framework_TestCase
+class GitVersionTest extends TestCase
 {
-    public function setUp()
-    {
-        putenv('GIT_DOT_DIR=_git');
-    }
-
-    public function tearDown()
-    {
-        putenv('GIT_DOT_DIR=');
-    }
-
     public function testCorrectVersion()
     {
         $gitVersion = $this->getObject();
@@ -90,6 +81,15 @@ class GitVersionTest extends \PHPUnit_Framework_TestCase
     {
         $gitVersion = $this->getObject(true);
 
+        $commit = $this->createCommit([
+            'author' => 'Antal Áron <antalaron@antalaron.hu>',
+            'authorDate' => (new \DateTime())->setTimestamp(1516971227),
+            'committer' => 'Antal Áron <antalaron@antalaron.hu>',
+            'committerDate' => (new \DateTime())->setTimestamp(1516971227),
+            'message' => 'Initial commit',
+        ]);
+
+        $this->assertTrue($gitVersion->getLatestCommitDetails(__DIR__.'/Fixtures/correct-with-commit')->isEqual($commit));
         $this->assertSame('Initial commit', $gitVersion->getLatestCommit(__DIR__.'/Fixtures/correct-with-commit'));
     }
 
@@ -97,6 +97,16 @@ class GitVersionTest extends \PHPUnit_Framework_TestCase
     {
         $gitVersion = $this->getObject(true);
 
+        $commit = $this->createCommit([
+            'author' => 'Antal Áron <antalaron@antalaron.hu>',
+            'authorDate' => (new \DateTime())->setTimestamp(1516971695),
+            'committer' => 'Antal Áron <antalaron@antalaron.hu>',
+            'committerDate' => (new \DateTime())->setTimestamp(1516971695),
+            'message' => 'Initial commit',
+            'description' => "Description content\n",
+        ]);
+
+        $this->assertTrue($gitVersion->getLatestCommitDetails(__DIR__.'/Fixtures/correct-with-commit-and-description')->isEqual($commit));
         $this->assertSame('Initial commit', $gitVersion->getLatestCommit(__DIR__.'/Fixtures/correct-with-commit-and-description'));
     }
 
@@ -125,6 +135,14 @@ class GitVersionTest extends \PHPUnit_Framework_TestCase
     {
         $gitVersion = $this->getObject(true);
 
+        $commit = $this->createCommit([
+            'author' => 'Antal Áron <antalaron@antalaron.hu>',
+            'authorDate' => (new \DateTime())->setTimestamp(1585229077),
+            'committer' => 'Antal Áron <antalaron@antalaron.hu>',
+            'committerDate' => (new \DateTime())->setTimestamp(1585229077),
+            'message' => 'Second commit',
+        ]);
+
         $this->assertSame('f2213cbda1486db7befc77d8422d066f585958d4', $gitVersion->getVersion(__DIR__.'/Fixtures/correct-packed'));
         $this->assertSame('Second commit', $gitVersion->getLatestCommit(__DIR__.'/Fixtures/correct-packed'));
         $this->assertNull($gitVersion->getLatestCommit(__DIR__.'/Fixtures/correct-packed', false));
@@ -137,5 +155,19 @@ class GitVersionTest extends \PHPUnit_Framework_TestCase
         }
 
         return new GitVersion();
+    }
+
+    private function createCommit(array $data = null)
+    {
+        $commit = new Commit('');
+
+        $reflection = new \ReflectionClass($commit);
+        foreach ($data as $property => $value) {
+            $property = $reflection->getProperty($property);
+            $property->setAccessible(true);
+            $property->setValue($commit, $value);
+        }
+
+        return $commit;
     }
 }

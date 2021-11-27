@@ -9,6 +9,7 @@
 >
     <php>
         <ini name="error_reporting" value="-1" />
+        <env name="GIT_DOT_DIR" value="_git" force="true" />
     </php>
 
     <testsuites>
