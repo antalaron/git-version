@@ -51,6 +51,16 @@ $gitVersion->getLatestCommit(__DIR__);
 
 On error, the return value is `null`.
 
+To get the latest commit object:
+
+```php
+$gitVersion = new \Antalaron\GitVersion\GitVersion();
+$gitVersion->getLatestCommitDetails(__DIR__);
+
+// or static
+\Antalaron\GitVersion\GitVersion::getGitLatestCommitDetails(__DIR__);
+```
+
 License
 -------
 
