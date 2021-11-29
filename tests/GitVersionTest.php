@@ -145,6 +145,7 @@ class GitVersionTest extends TestCase
 
         $this->assertSame('f2213cbda1486db7befc77d8422d066f585958d4', $gitVersion->getVersion(__DIR__.'/Fixtures/correct-packed'));
         $this->assertSame('Second commit', $gitVersion->getLatestCommit(__DIR__.'/Fixtures/correct-packed'));
+        $this->assertTrue($gitVersion->getLatestCommitDetails(__DIR__.'/Fixtures/correct-packed')->isEqual($commit));
         $this->assertNull($gitVersion->getLatestCommit(__DIR__.'/Fixtures/correct-packed', false));
     }
 
@@ -162,6 +163,15 @@ class GitVersionTest extends TestCase
 
         $this->assertTrue($gitVersion->getLatestCommitDetails(__DIR__.'/Fixtures/signed-commit')->isEqual($commit));
         $this->assertSame('Initial commit', $gitVersion->getLatestCommit(__DIR__.'/Fixtures/signed-commit'));
+    }
+
+    public function testDetachedHead()
+    {
+        $gitVersion = $this->getObject(true);
+
+        $this->assertSame('aa48807', $gitVersion->getVersion(__DIR__.'/Fixtures/detached-head', 7));
+        $this->assertSame('aa48807a5f5dab3a9068411aeaf174f479f42aae', $gitVersion->getVersion(__DIR__.'/Fixtures/detached-head'));
+        $this->assertSame('Initial commit', $gitVersion->getLatestCommit(__DIR__.'/Fixtures/detached-head'));
     }
 
     private function getObject($zlibAware = false)

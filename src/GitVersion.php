@@ -55,9 +55,18 @@ class GitVersion
             return null;
         }
 
-        preg_match('/ref: (?P<ref>[a-zA-Z0-9_\-\/]+)$/', file_get_contents($headFile), $matches);
+        preg_match('/ref: (?P<ref>[a-zA-Z0-9_\-\/]+)$/', $head = file_get_contents($headFile), $matches);
         if (!\array_key_exists('ref', $matches)) {
-            return null;
+            if (!preg_match('/^[a-f0-9]{40}/', $head)) {
+                return null;
+            }
+
+            $hash = rtrim($head);
+            if (null !== $hashLength) {
+                $hash = substr($hash, 0, $hashLength);
+            }
+
+            return $hash;
         }
 
         if (!file_exists($refFile = $gitDirectory.'/'.$matches['ref']) || !is_readable($refFile)) {
