@@ -148,6 +148,22 @@ class GitVersionTest extends TestCase
         $this->assertNull($gitVersion->getLatestCommit(__DIR__.'/Fixtures/correct-packed', false));
     }
 
+    public function testWithSignedCommit()
+    {
+        $gitVersion = $this->getObject(true);
+
+        $commit = $this->createCommit([
+            'author' => 'Antal Áron <antalaron@antalaron.hu>',
+            'authorDate' => (new \DateTime())->setTimestamp(1638041187),
+            'committer' => 'Antal Áron <antalaron@antalaron.hu>',
+            'committerDate' => (new \DateTime())->setTimestamp(1638041187),
+            'message' => 'Initial commit',
+        ]);
+
+        $this->assertTrue($gitVersion->getLatestCommitDetails(__DIR__.'/Fixtures/signed-commit')->isEqual($commit));
+        $this->assertSame('Initial commit', $gitVersion->getLatestCommit(__DIR__.'/Fixtures/signed-commit'));
+    }
+
     private function getObject($zlibAware = false)
     {
         if ($zlibAware && !\extension_loaded('zlib')) {
