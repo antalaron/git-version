@@ -104,7 +104,7 @@ class GitUnpacker
 
             $packPosition = $unpacked[0];
             // Pack files >2GB
-            if (0x80000000 === 0x80000000 & $packPosition) {
+            if (0x80000000 === (0x80000000 & $packPosition)) {
                 $packOffset = 0x7fffffff & $packPosition;
 
                 fseek($fileResource, 0x08 + 0x100 * 0x04 + $totalCount * 20 + $totalCount * 0x04 + $totalCount * 0x04 + $packOffset * 0x08);
