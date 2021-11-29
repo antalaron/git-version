@@ -140,7 +140,7 @@ class GitUnpacker
             $binary = fread($fileResource, 1);
             $unpacked = unpack('C1', $binary);
             $unpacked = array_values($unpacked);
-            $value = $value | (0x7f & $unpacked[0]) << max($i * 0x07 - 0x03, 0);
+            $value = $value | ($unpacked[0] & (0 === $i ? 0x0f : 0x7f)) << max($i * 0x07 - 0x03, 0);
             ++$i;
         } while ($unpacked[0] > 0x7f);
 
