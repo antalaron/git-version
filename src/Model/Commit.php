@@ -111,13 +111,12 @@ class Commit
      */
     public function isEqual(self $commit)
     {
-        return $this->author === $commit->getAuthor()
+        return $commit->getAuthor() === $this->author
             && $this->dateEquals($this->authorDate, $commit->getAuthorDate())
-            && $this->committer === $commit->getCommitter()
+            && $commit->getCommitter() === $this->committer
             && $this->dateEquals($this->committerDate, $commit->getCommitterDate())
-            && $this->message === $commit->getMessage()
-            && $this->description === $commit->getDescription()
-        ;
+            && $commit->getMessage() === $this->message
+            && $commit->getDescription() === $this->description;
     }
 
     private function dateEquals(\DateTimeInterface $date, \DateTimeInterface $dateToCompare)

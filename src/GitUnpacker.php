@@ -36,7 +36,7 @@ class GitUnpacker
                 continue;
             }
 
-            $fileResource = fopen($indexFile->getPathname(), 'rb');
+            $fileResource = fopen($indexFile->getPathname(), 'r');
 
             if ('00' === substr($this->ref, 0, 2)) {
                 $unpacked = 0;
@@ -58,7 +58,7 @@ class GitUnpacker
             $unpacked = array_values($unpacked);
             $count = $unpacked[0] - $position;
 
-            fseek($fileResource, 0x08 + 0xff * 0x04);
+            fseek($fileResource, 0x08 + 0xFF * 0x04);
             $binary = fread($fileResource, 4);
 
             $unpacked = unpack('C4', $binary);
@@ -105,7 +105,7 @@ class GitUnpacker
             $packPosition = $unpacked[0];
             // Pack files >2GB
             if (0x80000000 === (0x80000000 & $packPosition)) {
-                $packOffset = 0x7fffffff & $packPosition;
+                $packOffset = 0x7FFFFFFF & $packPosition;
 
                 fseek($fileResource, 0x08 + 0x100 * 0x04 + $totalCount * 20 + $totalCount * 0x04 + $totalCount * 0x04 + $packOffset * 0x08);
                 $binary = fread($fileResource, 8);
@@ -132,7 +132,7 @@ class GitUnpacker
             return null;
         }
 
-        $fileResource = fopen($file, 'rb');
+        $fileResource = fopen($file, 'r');
         fseek($fileResource, $offset);
         $i = 0;
         $value = 0;
@@ -140,9 +140,9 @@ class GitUnpacker
             $binary = fread($fileResource, 1);
             $unpacked = unpack('C1', $binary);
             $unpacked = array_values($unpacked);
-            $value = $value | ($unpacked[0] & (0 === $i ? 0x0f : 0x7f)) << max($i * 0x07 - 0x03, 0);
+            $value = $value | ($unpacked[0] & (0 === $i ? 0x0F : 0x7F)) << max($i * 0x07 - 0x03, 0);
             ++$i;
-        } while ($unpacked[0] > 0x7f);
+        } while (0x7F < $unpacked[0]);
 
         // assume compressed size is smaller then decompressed
         $size = min(filesize($file) - $offset - $i, $value);

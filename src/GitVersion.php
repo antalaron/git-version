@@ -38,7 +38,7 @@ class GitVersion
     /**
      * Get brach.
      *
-     * @param string   $startDirectory Directory where to start finding git repo
+     * @param string $startDirectory Directory where to start finding git repo
      *
      * @return string|null The hash, or null if error
      */
@@ -56,7 +56,7 @@ class GitVersion
 
         if (!preg_match('/ref: refs\/heads\/(?P<branch>[a-zA-Z0-9_\-]+)$/', file_get_contents($headFile), $matches)) {
             return null;
-        };
+        }
 
         return $matches['branch'];
     }
@@ -217,7 +217,7 @@ class GitVersion
                 break;
             }
 
-            if ($directory === \dirname($directory)) {
+            if (\dirname($directory) === $directory) {
                 return null;
             }
 

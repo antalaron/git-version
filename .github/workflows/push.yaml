@@ -10,10 +10,15 @@ jobs:
             -
                 uses: actions/checkout@master
             -
-                name: PHP-CS-Fixer
-                uses: docker://oskarstark/php-cs-fixer-ga:2.15.1
+                uses: shivammathur/setup-php@v2
                 with:
-                    args: --diff --dry-run -vvv
+                    php-version: '8.2'
+                    extensions: intl, mbstring
+            -
+                run: |
+                  mkdir -p tools/php-cs-fixer
+                  composer require --working-dir=tools/php-cs-fixer friendsofphp/php-cs-fixer
+                  tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --diff --dry-run -vvv --config=.php-cs-fixer.dist.php --show-progress=none
 
     test:
         name: Test on PHP ${{ matrix.php-versions }}, dependencies ${{ matrix.dependencies }}
@@ -37,7 +42,7 @@ jobs:
 
         steps:
             -
-                uses: actions/checkout@v2
+                uses: actions/checkout@v4
 
             -
                 name: Setup PHP
@@ -48,7 +53,7 @@ jobs:
 
             -
                 name: Install Composer Dependencies
-                uses: ramsey/composer-install@v1
+                uses: ramsey/composer-install@v3
                 with:
                     dependency-versions: "${{ matrix.dependencies }}"
 
