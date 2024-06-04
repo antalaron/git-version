@@ -36,6 +36,32 @@ class GitVersion
     }
 
     /**
+     * Get brach.
+     *
+     * @param string   $startDirectory Directory where to start finding git repo
+     *
+     * @return string|null The hash, or null if error
+     */
+    public function getBranch($startDirectory)
+    {
+        $gitDirectory = $this->getGitDirectory(realpath($startDirectory));
+
+        if (null === $gitDirectory) {
+            return null;
+        }
+
+        if (!file_exists($headFile = $gitDirectory.'/HEAD') || !is_readable($headFile)) {
+            return null;
+        }
+
+        if (!preg_match('/ref: refs\/heads\/(?P<branch>[a-zA-Z0-9_\-]+)$/', file_get_contents($headFile), $matches)) {
+            return null;
+        };
+
+        return $matches['branch'];
+    }
+
+    /**
      * Get version.
      *
      * @param string   $startDirectory Directory where to start finding git repo

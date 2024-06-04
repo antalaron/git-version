@@ -28,6 +28,13 @@ class GitVersionTest extends TestCase
         $this->assertSame('b302440fd9972a341f2ecbe50d347b9fbd5b9f0b', $gitVersion->getVersion(__DIR__.'/Fixtures/correct'));
     }
 
+    public function testBranch()
+    {
+        $gitVersion = $this->getObject();
+
+        $this->assertSame('master', $gitVersion->getBranch(__DIR__.'/Fixtures/correct'));
+    }
+
     public function testCorrectVersionUnderSubdirs()
     {
         $gitVersion = $this->getObject();
@@ -169,6 +176,7 @@ class GitVersionTest extends TestCase
     {
         $gitVersion = $this->getObject(true);
 
+        $this->assertNull($gitVersion->getBranch(__DIR__.'/Fixtures/detached-head', 7));
         $this->assertSame('aa48807', $gitVersion->getVersion(__DIR__.'/Fixtures/detached-head', 7));
         $this->assertSame('aa48807a5f5dab3a9068411aeaf174f479f42aae', $gitVersion->getVersion(__DIR__.'/Fixtures/detached-head'));
         $this->assertSame('Initial commit', $gitVersion->getLatestCommit(__DIR__.'/Fixtures/detached-head'));
