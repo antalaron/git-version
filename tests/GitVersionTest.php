@@ -138,6 +138,13 @@ class GitVersionTest extends TestCase
         $this->assertSame('b302440fd9972a341f2ecbe50d347b9fbd5b9f0b', $gitVersion->getVersion(__DIR__.'/Fixtures/correct-with-number'));
     }
 
+    public function testCorrectWithDotVersion()
+    {
+        $gitVersion = $this->getObject();
+
+        $this->assertSame('eca4e6ea1f8b32a55c541c01a694bacd9b33ab1b', $gitVersion->getVersion(__DIR__.'/Fixtures/correct-with-dot'));
+    }
+
     public function testCorrectPacked()
     {
         $gitVersion = $this->getObject(true);
