@@ -78,7 +78,7 @@ class GitUnpacker
                 $unpacked = array_values($unpacked);
 
                 $hash = implode('', array_map(function ($byte) {
-                    return sprintf('%02x', $byte);
+                    return \sprintf('%02x', $byte);
                 }, $unpacked));
 
                 if ($hash === $this->ref) {

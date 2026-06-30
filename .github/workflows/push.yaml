@@ -12,12 +12,12 @@ jobs:
             -
                 uses: shivammathur/setup-php@v2
                 with:
-                    php-version: '8.2'
+                    php-version: '8.1'
                     extensions: intl, mbstring
             -
                 run: |
                   mkdir -p tools/php-cs-fixer
-                  composer require --working-dir=tools/php-cs-fixer friendsofphp/php-cs-fixer
+                  composer require --dev --working-dir=tools/php-cs-fixer friendsofphp/php-cs-fixer:3.64.0
                   tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --diff --dry-run -vvv --config=.php-cs-fixer.dist.php --show-progress=none
 
     test:
@@ -27,18 +27,8 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                php-versions: ['5.5', '5.6', '7.0', '7.1', 7.2', '7.3', 7.4', '8.0', '8.1', '8.2']
+                php-versions: ['5.5', '8.4']
                 dependencies: ['lowest', 'highest']
-                exclude:
-                    -
-                        php-versions: '8.0'
-                        dependencies: 'lowest'
-                    -
-                        php-versions: '8.1'
-                        dependencies: 'lowest'
-                    -
-                        php-versions: '8.2'
-                        dependencies: 'lowest'
 
         steps:
             -

@@ -172,7 +172,7 @@ class GitVersion
     public function getLatestCommitDetails($startDirectory, $usePack = true)
     {
         if (!\function_exists('zlib_decode')) {
-            throw new \RuntimeException(sprintf('You should enable ext-zlib extension to use %s()', __METHOD__));
+            throw new \RuntimeException(\sprintf('You should enable ext-zlib extension to use %s()', __METHOD__));
         }
 
         $gitDirectory = $this->getGitDirectory(realpath($startDirectory));
